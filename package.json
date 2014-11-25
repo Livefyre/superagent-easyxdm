@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "easyxdm": "^2.4.19-pre.1",
     "madlib-shim-easyxdm": "^2.4.19-3"
   }
 }
