@@ -1,0 +1,18 @@
+{
+  "name": "superagent-easyxdm-demo",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "browserify-dev-middleware": "0.0.6",
+    "express": "^4.10.3",
+    "portfinder": "^0.2.1",
+    "serve-static": "^1.7.1",
+    "superagent": "^0.21.0"
+  }
+}
