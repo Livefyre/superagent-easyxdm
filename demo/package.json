@@ -10,8 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "browserify-dev-middleware": "0.0.6",
+    "cors": "^2.5.2",
     "easyxdm": "^2.4.19-pre.1",
     "express": "^4.10.3",
+    "morgan": "^1.5.0",
     "portfinder": "^0.2.1",
     "serve-static": "^1.7.1",
     "superagent": "^0.21.0"

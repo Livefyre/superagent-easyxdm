@@ -60,7 +60,6 @@
         local: {
             // define the exposed method
             request: function(config, success, error){
-            
                 // apply default values if not set
                 easyXDM.apply(config, {
                     method: "POST",
@@ -82,22 +81,21 @@
                     config.headers.Origin = remote.origin;
                 }
                 
-                var isPOST = config.method == "POST";
-                
-                // convert the data into a format we can send to the server 
-                var pairs = [];
-                for (var key in config.data) {
-                    if (config.data.hasOwnProperty(key)) {
-                        pairs.push(encodeURIComponent(key) + "=" + encodeURIComponent(config.data[key]));
+                // convert the data into a format we can send to the server
+                var data = config.data;
+                if (typeof data !== 'string') {
+                    var pairs = [];
+                    for (var key in config.data) {
+                        if (config.data.hasOwnProperty(key)) {
+                            pairs.push(encodeURIComponent(key) + "=" + encodeURIComponent(config.data[key]));
+                        }
                     }
+                    data = pairs.join("&");
                 }
-                var data = pairs.join("&");
                 
                 // create the XMLHttpRequest object
                 var req = getXhr();
-                var url = !isPOST && data
-                    ? config.url + (~config.url.indexOf('?') ? '&' : '?') + data
-                    : config.url;
+                var url = config.url;
                 req.open(config.method, url, true);
                 
                 // apply the request headers
@@ -197,7 +195,7 @@
                 };
                 
                 // issue the request
-                req.send(isPOST ? data : "");
+                req.send(data || "");
             }
         }
     });

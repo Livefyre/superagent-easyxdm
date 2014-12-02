@@ -1,10 +1,13 @@
 var request = require('superagent');
 var superAgentEasyXDM = require('..')
 
-var easyXDM = window.easyXDM = require('easyxdm');
+var easyXDM = window.easyXDM = require('easyxdm/debug');
+
+var apiHost = 'http://localhost:8000';
+var apiUrl = apiHost + '/api';
 
 var iframeRpc = new easyXDM.Rpc({
-  remote: "./easyxdm.html"
+  remote: apiHost + "/easyxdm.html"
 },
 {
   remote: {
@@ -14,25 +17,59 @@ var iframeRpc = new easyXDM.Rpc({
 
 window.iframeRpc = iframeRpc;
 
+/**
+ * Raw easyXDM
+ */
 iframeRpc.request({
-  url: './api',
+  url: apiUrl,
   method: 'get'
-}, onRequestSuccess, function (err) {
-  console.error('req error', err);
-})
-
+},
 function onRequestSuccess(res) {
   console.log('success req!', arguments);
   renderJSON(JSON.parse(res.data))
-}
+},
+function (err) {
+  renderJSON({
+    kind: 'raw easyXDM GET',
+    error: err
+  })
+});
 
-// request.get('./api')
-// .use(superAgentEasyXDM())
-// .end(function (err, res) {
-//   console.log('made req', res.body);
-//   console.log('saeasyxdm is', superAgentEasyXDM);
-//   renderJSON(req.body)
-// })
+/**
+ * superagent-easyxdm/rpc-request
+ */
+request.get(apiUrl)
+.use(superAgentEasyXDM.rpcRequest(iframeRpc))
+.end(createEndCallback());
+
+request.post(apiUrl)
+.send({ requestBody: 'agapism' })
+.use(superAgentEasyXDM.rpcRequest(iframeRpc))
+.end(createEndCallback());
+
+request.patch(apiUrl)
+.send([
+  { 
+    op: "test",
+    path: "/",
+    value: null
+  }
+])
+.use(superAgentEasyXDM.rpcRequest(iframeRpc))
+.end(createEndCallback());
+
+function createEndCallback() {
+  return function (err, res) {
+    if (err) {
+      renderJSON({
+        error: err,
+        res: res
+      });
+      return;
+    }
+    renderJSON(res.body);
+  }
+}
 
 function renderJSON(json) {
   var pre = document.createElement('pre');
