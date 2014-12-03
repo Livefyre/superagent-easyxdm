@@ -3,7 +3,7 @@
 * instance to invoke the 'request' method, which is assumed to behave like
 * the 'request' described here: https://github.com/oyvindkinsey/easyXDM#the-shipped-cors-interface
 */
-exports.rpcRequest = function (rpc) {
+exports.rpcRequest = function (rpcRequest) {
   return function (request) {
     var fakeXhr = request.xhr = {};
     request.end = function (fn) {
@@ -11,8 +11,18 @@ exports.rpcRequest = function (rpc) {
       var method = request.method;
       var data = this._formData || this._data;
       var headers = this.header;
+      var query = this._query;
 
+      // store end callback (required by downstream superagent internals)
       this._callback = fn || function () {};
+
+      // append this._query to querystring
+      if (query) {
+        query = query.join('&');
+        url += ~url.indexOf('?')
+          ? '&' + query
+          : '?' + query;
+      }
 
       // request body
       var shouldSendBody = ['GET','HEAD','OPTIONS'].indexOf(method) === -1;
@@ -20,8 +30,8 @@ exports.rpcRequest = function (rpc) {
         data = serialize(this) || data;
       }
 
-      // ok do the request using rpc
-      rpc.request({
+      // ok do the request using rpcRequest
+      rpcRequest({
           url: url,
           method: method,
           headers: headers,
@@ -90,18 +100,11 @@ function getResponseHeader(res, headerName) {
 };
 
 /**
-
-iframeRpc.request({
-url: apiUrl,
-method: 'get'
-}, onRequestSuccess, function (err) {
-console.error('req error', err);
-debugger;
-})
-*/
-
+ * Map of request content-type strings to a function that can be used to
+ * serialize an object to a valid string for that content-type
+ */
 var serializations = {
-  'application/x-www-form-urlencoded': serialize,
+  'application/x-www-form-urlencoded': serializeObjToFormData,
   'application/json': JSON.stringify
 };
 
