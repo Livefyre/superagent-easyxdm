@@ -1,6 +1,6 @@
 {
   "name": "superagent-easyxdm",
-  "version": "0.0.0-pre.1",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "easyxdm": "^2.4.19-pre.1",
-    "madlib-shim-easyxdm": "^2.4.19-3"
+    "madlib-shim-easyxdm": "2.4.19-3"
   }
 }
